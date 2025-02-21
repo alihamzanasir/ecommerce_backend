@@ -26,6 +26,10 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api", router);
 app.use("/api", basketRouter);
 
+
+app.get("/",(req,res) => {
+  res.send("Hello World")
+})
 // connect to mongodb
 mongoose
   .connect(process.env.MONGO_URL, {
