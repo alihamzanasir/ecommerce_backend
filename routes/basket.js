@@ -19,7 +19,7 @@ const basketRouter = Router();
 
 basketRouter.post(
   "/admin/product",
-  authenticateUser,
+  // authenticateUser,
   multerImages.single("file"),
   basket
 );

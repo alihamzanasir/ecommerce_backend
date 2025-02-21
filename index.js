@@ -28,7 +28,7 @@ app.use("/api", basketRouter);
 
 
 app.get("/",(req,res) => {
-  res.send("Hello World")
+  res.send("Hello Ali")
 })
 // connect to mongodb
 mongoose
