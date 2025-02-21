@@ -1,6 +1,6 @@
 import { AddToCart, Cart } from "../../models/basketModel.js";
 
-const allProduct = async () => {
+const allProduct = async (req,res) => {
   try {
     const products = await Cart.find({});
 

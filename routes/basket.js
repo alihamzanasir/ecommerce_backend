@@ -35,7 +35,7 @@ basketRouter.patch(
 
 basketRouter.get("/user/allProduct", allProduct);
 basketRouter.post("/user/addProduct", authenticateUser, addbasket);
-basketRouter.get("/user/product", authenticateUser, getBasketProduct);
+basketRouter.get("/user/product", getBasketProduct);
 basketRouter.get("/user/productDetails/:id", productDetail);
 
 export { basketRouter };
