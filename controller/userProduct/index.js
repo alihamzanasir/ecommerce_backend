@@ -6,7 +6,7 @@ const allProduct = async (req, res) => {
 
     const updatedProducts = products.map((item) => ({
       ...item,
-      image: `${process.env.Base_URL}${item.image}`, // Add the base URL to the image path
+      image: `${process.env.Base_URL}${item.image}`,
     }));
     return res.status(200).json({ status: true, data:updatedProducts });
   } catch (error) {}

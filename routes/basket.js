@@ -31,11 +31,12 @@ basketRouter.patch(
   updateBasketItem
 );
 
-// user view
 
+  // live
 basketRouter.get("/user/products", allProduct);
+basketRouter.get("/user/productDetails/:id", productDetail);
+
 basketRouter.post("/user/addProduct", authenticateUser, addbasket);
 basketRouter.get("/user/product", getBasketProduct);
-basketRouter.get("/user/productDetails/:id", productDetail);
 
 export { basketRouter };
