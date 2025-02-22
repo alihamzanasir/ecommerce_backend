@@ -2,13 +2,13 @@ import { AddToCart, Cart } from "../../models/basketModel.js";
 
 const allProduct = async (req, res) => {
   try {
-    const products = await Cart.find({});
+    const products = await Cart.find({}).lean();
 
-    const data = products.map((item) => ({
+    const updatedProducts = products.map((item) => ({
       ...item,
-      image: `https://ecommerce-backend-3u6d.vercel.app/${item.image}`,
+      image: `${process.env.Base_URL}${item.image}`, // Add the base URL to the image path
     }));
-    return res.status(200).json({ status: true, data });
+    return res.status(200).json({ status: true, data:updatedProducts });
   } catch (error) {}
 };
 
