@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import swaggerUi from "swagger-ui-express";
@@ -20,7 +21,7 @@ const swaggerDocument = JSON.parse(
 
 const app = express();
 
-dotenv.config();
+
 app.use(express.json());
 app.use(cors());
 
