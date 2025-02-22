@@ -6,7 +6,7 @@ const allProduct = async (req, res) => {
 
     const updatedProducts = products.map((item) => ({
       ...item,
-      image: `${process.env.BASE_UR}${item.image}`,
+      image: `${"https://ecommerce-backend-3u6d.vercel.app/"}${item.image}`,
     }));
     return res.status(200).json({ status: true, data:updatedProducts });
   } catch (error) {}
