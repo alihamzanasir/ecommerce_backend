@@ -15,7 +15,7 @@ const basket = async (req, res) => {
     const newItem = await Cart.create({
       title,
       description,
-      image: `http://localhost:4000/${req.file.path}`,
+      image: req.file.path,
       price,
     });
 

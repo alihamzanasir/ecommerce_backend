@@ -7,6 +7,12 @@ import { router } from "./routes/auth.js";
 import { basketRouter } from "./routes/basket.js";
 import cors from "cors";
 import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url); // Get file path
+const __dirname = dirname(__filename); // Get directory path
+
 
 const swaggerDocument = JSON.parse(
   readFileSync(new URL("./swagger-output.json", import.meta.url))
@@ -28,7 +34,7 @@ app.use("/api", basketRouter);
 
 
 app.get("/",(req,res) => {
-  res.send("Hello Ali")
+  res.send("Hello ..l")
 })
 // connect to mongodb
 mongoose
@@ -43,7 +49,9 @@ mongoose
     console.error("Error connecting to MongoDB:", error);
   });
 
-app.use("/uploads", express.static("uploads"));
+// app.use("/uploads", express.static("uploads"));
+app.use(express.static('uploads'));
+app.use("/uploads", express.static(join(__dirname, 'uploads')));
 
 app.listen(process.env.PORT, () => {
   try {

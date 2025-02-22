@@ -1,10 +1,14 @@
 import { AddToCart, Cart } from "../../models/basketModel.js";
 
-const allProduct = async (req,res) => {
+const allProduct = async (req, res) => {
   try {
     const products = await Cart.find({});
 
-    return res.status(200).json({ status: true, data: products });
+    const data = products.map((item) => ({
+      ...item,
+      image: `https://ecommerce-backend-3u6d.vercel.app/${item.image}`,
+    }));
+    return res.status(200).json({ status: true, data });
   } catch (error) {}
 };
 
@@ -53,7 +57,7 @@ const getBasketProduct = async () => {
     if (!activeUserBasketData) {
       return res.status(200).json({ message: "Basket is empty" });
     }
-                                                    
+
     console.log(activeUserBasketData);
     return res
       .status(200)
