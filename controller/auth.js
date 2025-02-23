@@ -48,7 +48,7 @@ const signup = async (req, res) => {
     const user = await User.create(userData);
     return res
       .status(201)
-      .json({ message: "User signed up successfully", user,status:true });
+      .json({ message: "User signed up successfully",status:true });
   } catch (error) {
     console.error("Signup Error:", error);
     return res.status(500).json({ message: "Internal server error" });
