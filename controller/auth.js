@@ -11,6 +11,11 @@ const signup = async (req, res) => {
     const { email, provider, password, username, googleId, avatar, userImg } =
       req.body;
 
+    if(!provider){
+      return res
+      .status(400)
+      .json({ message: "provider is required" });
+  }
     if (!username || !email) {
       return res
         .status(400)
@@ -43,7 +48,7 @@ const signup = async (req, res) => {
     const user = await User.create(userData);
     return res
       .status(201)
-      .json({ message: "User signed up successfully", user });
+      .json({ message: "User signed up successfully", user,status:true });
   } catch (error) {
     console.error("Signup Error:", error);
     return res.status(500).json({ message: "Internal server error" });
