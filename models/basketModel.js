@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const cartSchema = new mongoose.Schema(
+const products = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -22,29 +22,20 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const addToCartSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  products: [
+const basketSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  items: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Cart",
-      required: true,
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cart",
+        required: true,
+      },
+      quantity: { type: Number, required: true, min: 1 },
     },
   ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
-const Cart = mongoose.model("Cart", cartSchema);
-const AddToCart = mongoose.model("basket", addToCartSchema);
+const Cart = mongoose.model("Cart", products);
+const Basket = mongoose.model("basket", basketSchema);
 
-export { Cart, AddToCart };
+export { Cart, Basket };

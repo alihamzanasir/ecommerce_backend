@@ -11,6 +11,7 @@ import {
   getBasketProduct,
   allProduct,
   productDetail,
+  deleteBasketProduct
 } from "../controller/userProduct/index.js";
 
 const basketRouter = Router();
@@ -36,7 +37,9 @@ basketRouter.patch(
 basketRouter.get("/user/products", allProduct);
 basketRouter.get("/user/productDetails/:id", productDetail);
 
-basketRouter.post("/user/addProduct", authenticateUser, addbasket);
-basketRouter.get("/user/product", getBasketProduct);
+basketRouter.post("/user/addtocart", authenticateUser, addbasket);
+basketRouter.get("/user/basketProduct",authenticateUser, getBasketProduct);
+
+basketRouter.delete("/user/basketProduct/:id",authenticateUser,deleteBasketProduct)
 
 export { basketRouter };
