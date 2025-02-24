@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { User } from "../models/authModel.js";
+import { Otp, User } from "../models/authModel.js";
+import { otpGeneratorFnc } from "../utils/index.js";
+import { sendMail } from "../lib/nodemailer.js";
 
 const generateToken = (payload) => {
   return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
@@ -8,14 +10,20 @@ const generateToken = (payload) => {
 
 const signup = async (req, res) => {
   try {
-    const { email, provider, password, username, googleId, avatar, userImg } =
-      req.body;
+    const {
+      email,
+      provider,
+      password,
+      username,
+      googleId,
+      avatar,
+      userImg,
+      // otp,
+    } = req.body;
 
-    if(!provider){
-      return res
-      .status(400)
-      .json({ message: "provider is required" });
-  }
+    if (!provider) {
+      return res.status(400).json({ message: "provider is required" });
+    }
     if (!username || !email) {
       return res
         .status(400)
@@ -48,7 +56,7 @@ const signup = async (req, res) => {
     const user = await User.create(userData);
     return res
       .status(201)
-      .json({ message: "User signed up successfully",status:true });
+      .json({ message: "User signed up successfully", status: true });
   } catch (error) {
     console.error("Signup Error:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -93,4 +101,32 @@ const login = async (req, res) => {
   }
 };
 
-export { signup, login };
+const otpFnc = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const existingOtp = await Otp.findOne({ email });
+
+    if (existingOtp) {
+      return res.status(429).json({
+        message:
+          "A new OTP can be generated after 1 minute. Please try again later.",
+      });
+    }
+
+    const otp = otpGeneratorFnc(4);
+
+    await Otp.create({ email, otp });
+    await sendMail(email, otp);
+
+    res.json({
+      success: true,
+      message: "OTP generated successfully",
+      expiresIn: "1 minut",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { signup, login, otpFnc };

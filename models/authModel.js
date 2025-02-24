@@ -18,12 +18,11 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default:null
+    default: null,
   },
   userImg: {
     type: String,
-    default:null
-
+    default: null,
   },
   provider: {
     type: String,
@@ -39,6 +38,23 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const User = mongoose.model("User", userSchema);
+const otpSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+  },
+  otp: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 60, // The document will be automatically deleted after 5 minutes of its creation time
+  },
+});
 
-export { User };
+const User = mongoose.model("User", userSchema);
+const Otp = mongoose.model("Otp", otpSchema);
+
+export { User, Otp };
