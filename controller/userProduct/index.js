@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { Basket, Cart } from "../../models/basketModel.js";
 
 const allProduct = async (req, res) => {
@@ -6,7 +8,7 @@ const allProduct = async (req, res) => {
 
     const updatedProducts = products.map((item) => ({
       ...item,
-      image: `${"https://ecommerce-backend-3u6d.vercel.app/"}${item.image}`,
+      image: `${process.env.BASE_URL}${item.image}`,
     }));
     return res.status(200).json({ status: true, data: updatedProducts });
   } catch (error) {}
@@ -52,12 +54,28 @@ const addbasket = async (req, res) => {
 const getBasketProduct = async (req, res) => {
   try {
     const userId = req.user._id;
-    const cart = await Basket.findOne({ userId }).populate("items.productId");
+    const { page = 1, limit = 10 } = req.query;
+
+    const cart = await Basket.findOne({ userId })
+      .populate({
+        path: "items.productId",
+        options: {
+          limit: Number(limit),
+          skip: (Number(page) - 1) * Number(limit),
+        },
+      })
+      .lean();
 
     if (!cart) {
       return res.json({
         success: true,
-        cart: { userId, items: [], totalProducts: 0 },
+        cart: {
+          userId,
+          items: [],
+          totalProducts: 0,
+          totalPages: 0,
+          currentPage: 1,
+        },
       });
     }
 
@@ -65,8 +83,25 @@ const getBasketProduct = async (req, res) => {
       (sum, item) => sum + item.quantity,
       0
     );
+    const totalItems = await Basket.aggregate([
+      { $match: { userId } },
+      { $project: { totalItems: { $size: "$items" } } },
+    ]);
 
-    res.json({ success: true, cart: { ...cart.toObject(), totalProducts } });
+    const totalPages = Math.ceil((totalItems[0]?.totalItems || 0) / limit);
+
+    res.json({
+      success: true,
+      items: cart.items.map((item) => ({
+        product: {
+          ...item.productId,
+          image: `${process.env.BASE_URL}/${item.productId.image}`,
+        },
+      })),
+      totalProducts,
+      totalPages,
+      currentPage: Number(page),
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

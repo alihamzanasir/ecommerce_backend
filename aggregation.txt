@@ -1,0 +1,24 @@
+Aggregation
+Find the Documents
+
+Db.Aggregation([{$match:{email}}])
+
+group the Documents by age and find names
+
+Db.Aggregation([{$group:{_id:"$age",names:{$push:"$name"}}}])
+
+Get Full group document
+Db.Aggregation([{$group:{_id:"$age",FullDocument:{$push:"$$ROOT"}}}])
+
+Number fo Group documents find
+Db.Aggregation([{$match:{email}},{$group:{_id:"$age",countDocuments:{$sum:1}}}]) means sum increment 1 in the each document
+
+unwind create the seprate copy of the same object and same id but the different hobies 
+Db.Aggregation([{$unwind:"$Hobbies"}])
+
+find the average with Aggregation
+Db.Aggregation([{...{$group:{_id:null,averge:{$avg:"$age"}}}}])
+
+
+bucket Aggregation for grouping the 10 to 20 age of person
+Db.Aggregation([{$match:{gender:"male"}},{bucket:{groupBy:"$age",boundaries:[0,30,40],default:"Greater then 40",output:{count:{$sum:1I}}}}])
