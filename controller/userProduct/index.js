@@ -54,7 +54,7 @@ const addbasket = async (req, res) => {
 const getBasketProduct = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 5 } = req.query;
 
     const cart = await Basket.findOne({ userId })
       .populate({
