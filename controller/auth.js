@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { Otp, User } from "../models/authModel.js";
 import { otpGeneratorFnc } from "../utils/index.js";
 import { sendMail } from "../lib/nodemailer.js";
+import { verifyGoogleToken } from "../lib/googleAuthToken.js";
 
 const generateToken = (payload) => {
   return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
@@ -20,6 +21,8 @@ const signup = async (req, res) => {
       userImg,
       // otp,
     } = req.body;
+
+    console.log(await verifyGoogleToken(), "verifyGoogleToken");
 
     if (!provider) {
       return res.status(400).json({ message: "provider is required" });

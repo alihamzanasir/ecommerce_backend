@@ -95,7 +95,7 @@ const getBasketProduct = async (req, res) => {
       items: cart.items.map((item) => ({
         product: {
           ...item.productId,
-          image: `${process.env.BASE_URL}/${item.productId.image}`,
+          image: `${process.env.BASE_URL}/${item?.productId?.image}`,
         },
       })),
       totalProducts,
