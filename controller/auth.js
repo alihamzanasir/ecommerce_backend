@@ -77,7 +77,7 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, provider, password } = req.body;
+    const { email, provider, password ,token} = req.body;
 
     if (!provider) {
       return res.status(400).json({ message: "provider is required" });
