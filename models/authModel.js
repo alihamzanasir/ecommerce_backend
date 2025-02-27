@@ -16,21 +16,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 6,
   },
-  avatar: {
-    type: String,
-    default: null,
-  },
-  userImg: {
-    type: String,
-    default: null,
-  },
   provider: {
     type: String,
     enum: ["email", "google"],
     required: true,
-  },
-  googleId: {
-    type: String,
   },
   createdAt: {
     type: Date,
@@ -45,6 +34,11 @@ const otpSchema = new mongoose.Schema({
   },
   otp: {
     type: String,
+    required: true,
+  },
+  provider: {
+    type: String,
+    enum: ["signup", "forgot"],
     required: true,
   },
   createdAt: {

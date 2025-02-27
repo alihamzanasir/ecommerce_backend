@@ -56,7 +56,7 @@ app.use("/uploads", express.static(join(__dirname, 'uploads')));
 
 app.listen(process.env.PORT, () => {
   try {
-    console.log("server starting at port 4000");
+    console.log(`server starting at port ${process.env.PORT}`);
   } catch (error) {
     console.log("server error");
   }

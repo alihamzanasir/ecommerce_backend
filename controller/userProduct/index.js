@@ -45,7 +45,7 @@ const addbasket = async (req, res) => {
     }
 
     await cart.save();
-    res.json({ success: true, cart });
+    res.json({ success: true, message: "item add successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -57,14 +57,21 @@ const getBasketProduct = async (req, res) => {
     const { page = 1, limit = 5 } = req.query;
 
     const cart = await Basket.findOne({ userId })
-      .populate({
-        path: "items.productId",
-        options: {
-          limit: Number(limit),
-          skip: (Number(page) - 1) * Number(limit),
-        },
-      })
+      .populate("items.productId")
       .lean();
+
+    const totalProducts = cart.items.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+
+    const totalPrice = cart.items.reduce(
+      (sum, item) => sum + parseFloat(item?.productId?.price),
+      0
+    );
+    if (cart) {
+      cart.items = cart.items.slice((page - 1) * limit, page * limit);
+    }
 
     if (!cart) {
       return res.json({
@@ -79,28 +86,32 @@ const getBasketProduct = async (req, res) => {
       });
     }
 
-    const totalProducts = cart.items.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    );
     const totalItems = await Basket.aggregate([
       { $match: { userId } },
       { $project: { totalItems: { $size: "$items" } } },
     ]);
 
     const totalPages = Math.ceil((totalItems[0]?.totalItems || 0) / limit);
-
     res.json({
       success: true,
-      items: cart.items.map((item) => ({
-        product: {
-          ...item.productId,
-          image: `${process.env.BASE_URL}/${item?.productId?.image}`,
-        },
-      })),
+      items: cart.items.map((item) => {
+        const { _id, title, description, price, image } = item.productId;
+
+        return {
+          product: {
+            _id,
+            title,
+            description,
+            price,
+            image: `${process.env.BASE_URL}/${image}`,
+            quantity: item.quantity,
+          },
+        };
+      }),
       totalProducts,
       totalPages,
       currentPage: Number(page),
+      totalPrice: parseFloat(totalPrice.toFixed(2)),
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
