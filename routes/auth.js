@@ -7,6 +7,13 @@ import {
   signup,
 } from "../controller/auth.js";
 import authenticateUser from "../middleware/authenticateUser.js";
+import { createRequire } from 'module';
+import { createRequire } from 'module';
+
+var require = createRequire(import.meta.url);
+var module = { exports: {} };
+
+const require = createRequire(import.meta.url);
 
 const router = Router();
 
