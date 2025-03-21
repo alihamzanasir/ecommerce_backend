@@ -10,6 +10,7 @@ import cors from "cors";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import morgan from "morgan";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename); 
@@ -24,7 +25,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-
+app.use(morgan('dev'));
 //swagger-ui
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
