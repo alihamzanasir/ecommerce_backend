@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { Basket, Cart } from "../../models/basketModel.js";
+import { Basket, Product } from "../../models/basketModel.js";
 
 const allProduct = async (req, res) => {
   try {
-    const products = await Cart.find({}).lean();
+    const products = await Product.find({}).lean();
 
     const updatedProducts = products.map((item) => ({
       ...item,
@@ -18,7 +18,7 @@ const productDetail = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const productDetail = await Cart.findById(id);
+    const productDetail = await Product.findById(id);
     res.status(200).json({ status: true, data: productDetail });
   } catch (error) {}
 };
