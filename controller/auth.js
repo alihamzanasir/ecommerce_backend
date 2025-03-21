@@ -5,13 +5,13 @@ import { otpGeneratorFnc } from "../utils/index.js";
 import { sendMail } from "../lib/nodemailer.js";
 import { verifyGoogleToken } from "../lib/googleAuthToken.js";
 
-const generateToken = (payload,expireIn) => {
+const generateToken = (payload, expireIn) => {
   return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: expireIn });
 };
 
 const signup = async (req, res) => {
   try {
-    const { email, provider, password, username, token, otp } = req.body;
+    const { email, provider, password, username, token } = req.body;
 
     if (!provider) {
       return res.status(400).json({ message: "provider is required" });
@@ -28,21 +28,21 @@ const signup = async (req, res) => {
     };
 
     if (provider === "email") {
-      if (!password || !otp || !username || !email) {
+      if (!password  || !username || !email) {
         return res
           .status(400)
           .json({ message: "username email password and otp are required" });
       }
 
-      const otpExit = await Otp.findOne({ email });
-      console.log(otpExit, ".....");
-      if (otpExit.provider !== "signup") {
-        return res.status(400).json({ message: "Invalid Email" });
-      } else if (otpExit === null) {
-        return res.status(400).json({ message: "otp is expire please resend" });
-      } else if (otpExit.otp !== otp) {
-        return res.status(400).json({ message: "invalid otp" });
-      }
+      // const otpExit = await Otp.findOne({ email });
+      // console.log(otpExit, ".....");
+      // if (otpExit.provider !== "signup") {
+      //   return res.status(400).json({ message: "Invalid Email" });
+      // } else if (otpExit === null) {
+      //   return res.status(400).json({ message: "otp is expire please resend" });
+      // } else if (otpExit.otp !== otp) {
+      //   return res.status(400).json({ message: "invalid otp" });
+      // }
 
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -57,7 +57,7 @@ const signup = async (req, res) => {
       }
       userData.email = userGoogleData.email;
       userData.username = userGoogleData.name;
-      var jwtToken = generateToken({ email: userData.email },"1h");
+      var jwtToken = generateToken({ email: userData.email }, "1h");
     }
 
     await User.create(userData);
@@ -77,7 +77,7 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, provider, password ,token} = req.body;
+    const { email, provider, password, token } = req.body;
 
     if (!provider) {
       return res.status(400).json({ message: "provider is required" });
@@ -110,13 +110,19 @@ const login = async (req, res) => {
       var googleUser = await User.findOne({ email: userGoogleData.email });
     }
 
-    const jwtToken = generateToken({
-      id: provider === "email" ? user._id : googleUser._id,
-      email: provider === "email" ? user.email : googleUser.email,
-    },"1h");
-    return res
-      .status(200)
-      .json({ status: true, message: "Login successful", token: jwtToken });
+    const jwtToken = generateToken(
+      {
+        id: provider === "email" ? user._id : googleUser._id,
+        email: provider === "email" ? user.email : googleUser.email,
+      },
+      "1h"
+    );
+    return res.status(200).json({
+      status: true,
+      message: "Login successful",
+      token: jwtToken,
+      ...(provider === "email" && { admin: user.admin }),
+    });
   } catch (error) {
     console.error("Login Error:", error);
     return res
@@ -184,7 +190,7 @@ const forgotPassword = async (req, res) => {
       return res.status(400).json({ status: false, message: "invalid otp" });
     }
 
-    const token = await generateToken({ email },"5m");
+    const token = await generateToken({ email }, "5m");
 
     res
       .status(201)

@@ -4,6 +4,7 @@ import {
   basket,
   deleteBasketItem,
   updateBasketItem,
+  manageProduct,
 } from "../controller/adminProduct/index.js";
 import authenticateUser from "../middleware/authenticateUser.js";
 import {
@@ -11,7 +12,7 @@ import {
   getBasketProduct,
   allProduct,
   productDetail,
-  deleteBasketProduct
+  deleteBasketProduct,
 } from "../controller/userProduct/index.js";
 
 const basketRouter = Router();
@@ -20,8 +21,12 @@ const basketRouter = Router();
 
 basketRouter.post(
   "/admin/product",
-  // authenticateUser,
-  multerImages.single("file"),
+  authenticateUser,
+  multerImages.fields([
+    { name: "promotionImage", maxCount: 1 },
+    { name: "productImages", maxCount: 5 },
+    { name: "video", maxCount: 1 },
+  ]),
   basket
 );
 basketRouter.delete("/admin/product/:id", authenticateUser, deleteBasketItem);
@@ -31,15 +36,19 @@ basketRouter.patch(
   multerImages.single("file"),
   updateBasketItem
 );
+basketRouter.get("/admin/manage-product", authenticateUser, manageProduct);
 
-
-  // live
+// live
 basketRouter.get("/user/products", allProduct);
 basketRouter.get("/user/productDetails/:id", productDetail);
 
 basketRouter.post("/user/addtocart", authenticateUser, addbasket);
-basketRouter.get("/user/basketProduct",authenticateUser, getBasketProduct);
+basketRouter.get("/user/basketProduct", authenticateUser, getBasketProduct);
 
-basketRouter.delete("/user/basketProduct/:id",authenticateUser,deleteBasketProduct)
+basketRouter.delete(
+  "/user/basketProduct/:id",
+  authenticateUser,
+  deleteBasketProduct
+);
 
 export { basketRouter };
